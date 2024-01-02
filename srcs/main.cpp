@@ -1,9 +1,4 @@
-#include "main.hpp"
-
-std::vector<std::vector<double> > input(void) {
-    std::vector<std::vector<double> > v;
-    return v;
-}
+#include "../includes/main.hpp"
 
 std::vector<std::vector<double> > reverse(std::vector<std::vector<double> > v) {
     return v;
@@ -19,11 +14,10 @@ std::vector<unsigned int> getShortestPath(std::vector<std::vector<double> > v) {
     return shortestPath;
 }
 
-
 int main() {
     std::vector<std::vector<double> > distances;
     try {
-        distances = input();
+        distances = parseTo2Dvector(std::cin);
     }
     catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
