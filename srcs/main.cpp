@@ -1,6 +1,4 @@
-#include <vector>
-#include <exception>
-#include <iostream>
+#include "main.hpp"
 
 std::vector<std::vector<double> > input(void) {
     std::vector<std::vector<double> > v;
@@ -16,6 +14,7 @@ std::vector<std::vector<double> > FloydWarshall(std::vector<std::vector<double> 
 }
 
 std::vector<unsigned int> getShortestPath(std::vector<std::vector<double> > v) {
+    (void)v;
     std::vector<unsigned int> shortestPath;
     return shortestPath;
 }
@@ -26,7 +25,7 @@ int main() {
     try {
         distances = input();
     }
-    catch (std::exception e) {
+    catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
