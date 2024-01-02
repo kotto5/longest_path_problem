@@ -22,6 +22,9 @@ objs/%.o:	srcs/%.cpp
 $(NAME):	$(OBJS)
 			$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
+debug:		CXXFLAGS += -DDEBUG
+debug:		re
+
 clean:
 			$(RM) $(OBJS) $(DEPS)
 

@@ -4,6 +4,18 @@
 
 typedef std::tuple<unsigned int, unsigned int, double> t_input;
 
+// debug function
+void    output_vector(std::vector<std::vector<double> > v) {
+    for (auto itr = v.begin(), end = v.end();
+        itr != end; ++itr) {
+        for (auto itr2 = itr->begin(), end2 = itr->end();
+            itr2 != end2; ++itr2) {
+            std::cout << *itr2 << ", ";
+        }
+        std::cout << "\r\n";
+    }
+}
+
 static bool isdouble(const std::string& s)
 {
     try
@@ -116,5 +128,8 @@ std::vector<std::vector<double> > parseTo2Dvector(std::istream& is) {
         itr != end; ++itr) {
         v[std::get<0>(*itr) - min][std::get<1>(*itr) - min] = std::get<2>(*itr);
     }
+    #ifdef DEBUG
+    output_vector(v);
+    #endif
     return v;
 }
