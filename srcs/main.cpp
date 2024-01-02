@@ -1,6 +1,29 @@
 #include "../includes/main.hpp"
+#include <limits>
+#include <cmath>
 
-std::vector<std::vector<double> > reverse(std::vector<std::vector<double> > v) {
+std::vector<std::vector<double> > mult(std::vector<std::vector<double> > v, double multiple) {
+    for (auto itr = v.begin(), end = v.end();
+        itr != end; ++itr) {
+        for (auto itr2 = itr->begin(), end2 = itr->end();
+            itr2 != end2; ++itr2) {
+            *itr2 *= multiple;
+        }
+    }
+    return v;
+}
+
+std::vector<std::vector<double> > fillBlankOfInput(std::vector<std::vector<double> > v) {
+    for (size_t i = 0, size = v.size(); i < size; i++) {
+        for (size_t j = 0; j < size; j++) {
+            if (std::isnan(v[i][j])) {
+                if (i == j)
+                    v[i][j] = 0;
+                else
+                    v[i][j] = std::numeric_limits<double>::infinity();
+            }
+        }
+    }
     return v;
 }
 
@@ -23,7 +46,8 @@ int main() {
         std::cerr << e.what() << std::endl;
         return 1;
     }
-    const std::vector<std::vector<double> > reverseDistances = reverse(distances);
+    const std::vector<std::vector<double> > reverseDistances = fillBlankOfInput(mult(distances, -1));
+    output_vector(reverseDistances);
     const std::vector<std::vector<double> > shortestDistances = FloydWarshall(reverseDistances);
     const std::vector<unsigned int> shortestPath = getShortestPath(shortestDistances);
     for (auto itr = shortestPath.begin(), end = shortestPath.end();

@@ -119,7 +119,7 @@ std::vector<std::vector<double> > parseTo2Dvector(std::istream& is) {
         itr->resize(size);
         for (auto itr2 = itr->begin(), end2 = itr->end();
             itr2 != end2; ++itr2) {
-            *itr2 = std::numeric_limits<double>::infinity();
+            *itr2 = std::numeric_limits<double>::quiet_NaN();
         }
     }
 
