@@ -37,7 +37,7 @@ struct comma_is_space : std::ctype<char> {
   }
 };
 
-double dfs(vector<vector<edge> > &G, int v, vector<bool> &used, vector<int> &next, int parent = -1) {
+double dfs(const vector<vector<edge> > &G, int v, vector<bool> &used, vector<int> &next, int parent = -1) {
     used[v] = true;
     vector<bool> used_copy(used);
     vector<int> next_copy(next);
@@ -80,9 +80,7 @@ int main() {
         int a, b;
         double c;
         cin >> a >> b >> c;
-        // c = c; // 最短路問題
         c = -1.0 * c; // 最長路問題
-        cout << a << " " << b << " " << c << endl;
         E.push_back({a, b, c});
         if (N < a)
             N = a;
@@ -91,20 +89,10 @@ int main() {
         if (cin.eof())
             break;
     }
-    for (auto v: E) {
-        cout << v.from << " " << v.to << " " << v.leng << endl;
-    }
-    cout << N << endl;
     vector<vector<edge> > G(N + 1);
     for (auto v: E) {
         G[v.from].push_back(v);
         G[v.to].push_back({v.to, v.from, v.leng});
-    }
-    cout << "--------- G is ! --------" << endl;
-    for (int i = 0; i < N + 1; ++i) {
-        for (auto v: G[i]) {
-            cout << v.from << " " << v.to << " " << v.leng << endl;
-        }
     }
 
     // main algorithm
