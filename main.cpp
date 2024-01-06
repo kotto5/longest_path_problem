@@ -77,29 +77,33 @@ double dfs(const vector<vector<edge> > &G, vector<bool> &seen, vector<int> &next
 // 無向グラフの最長路問題
 // 最大の経路のパスを出力する
 int main() {
-    vector<edge> edges;
-    int         graphSize = 0;
-    cin.imbue(locale(cin.getloc(), new comma_is_space));
-    while (1) {
-        int a, b;
-        double c;
-        cin >> a >> b >> c;
-        c = -1.0 * c; // 最長路問題
-        edges.push_back({a, b, c});
-        if (graphSize < a)
-            graphSize = a;
-        if (graphSize < b)
-            graphSize = b;
-        if (cin.eof())
-            break;
+    vector<vector<edge> > graph; // graph[v]: 頂点vから出る辺の集合
+    // input: init graph
+    {
+        int         graphSize = 0;
+        vector<edge> edges;
+        cin.imbue(locale(cin.getloc(), new comma_is_space));
+        while (1) {
+            int a, b;
+            double c;
+            cin >> a >> b >> c;
+            c = -1.0 * c; // 最長路問題
+            edges.push_back({a, b, c});
+            if (graphSize < a)
+                graphSize = a;
+            if (graphSize < b)
+                graphSize = b;
+            if (cin.eof())
+                break;
+        }
+        graphSize += 1;
+        graph.resize(graphSize);
+        for (auto v: edges) {
+            graph[v.from].push_back(v);
+            graph[v.to].push_back({v.to, v.from, v.leng});
+        }
     }
-    graphSize += 1;
-    vector<vector<edge> > graph(graphSize); // graph[v]: 頂点vから出る辺の集合
-    for (auto v: edges) {
-        graph[v.from].push_back(v);
-        graph[v.to].push_back({v.to, v.from, v.leng});
-    }
-
+    int graphSize = graph.size();
     // main algorithm
     {
         double  leng = -1.0 / 0.0;
