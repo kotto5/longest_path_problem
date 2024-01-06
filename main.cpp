@@ -39,29 +39,35 @@ struct comma_is_space : std::ctype<char> {
 
 double dfs(const vector<vector<edge> > &G, int v, vector<bool> &used, vector<int> &next, int parent = -1) {
     used[v] = true;
-    vector<bool> used_copy(used);
-    vector<int> next_copy(next);
+    vector<bool> used_longest(used);
+    vector<int> next_longest(next);
     double ret = 1.0 / 0.0;
     for (auto nv: G[v]) {
+        vector<int> next_tmp(next);
+        vector<bool> used_tmp(used);
         if (nv.to == parent)
             continue;
-        if (used_copy[nv.to])
+        if (used[nv.to])
         {
             // cout << "test 2 next: " << next[v] << endl;
             if (ret > nv.leng) {
                 ret = nv.leng;
-                next[v] = nv.to;
+                next_longest = next;
+                next_longest[v] = nv.to;
             }
             continue;
         }
-        int tmp = dfs(G, nv.to, used_copy, next_copy, v);
+        int tmp = dfs(G, nv.to, used_tmp, next_tmp, v);
         cout << "root" << v << " next_copy: " << nv.to << " tmp: " << tmp << " nv leng: " << nv.leng << " tmp + nv.leng: " << tmp + nv.leng << endl;
         if (ret > tmp + nv.leng) {
             ret = tmp + nv.leng;
-            next = next_copy;
-            next[v] = nv.to;
+            next_longest = next_tmp;
+            next_longest[v] = nv.to;
+            used_longest = used_tmp;
         }
     }
+    used = used_longest;
+    next = next_longest;
     if (ret == 1.0 / 0.0)
         ret = 0.0;
     return ret;
@@ -97,21 +103,32 @@ int main() {
 
     // main algorithm
     {
+        int i = 2;
         vector<bool> used(N + 1, false);
-        // vector<double> dist(N + 1, 1.0 / 0.0);
-        // dist[1] = 0;
         vector<int> next(N + 1, -1);
         cout << "-----------------" << endl;
         // cout << dfs(G, 1, used, dist, next) << endl; // 最短路問題
-        cout << -1.0 * dfs(G, 1, used, next) << endl; // 最長路問題
-        cout << 1 << endl;
-        int v = next[1];
-        while (v != -1 && v != 1) {
+        double  leng = -1.0 * dfs(G, i, used, next);
+        cout <<  leng << endl;
+        cout << "======= root: " << i << " =======" << endl;
+        vector<bool> printed(N + 1, false);
+        cout << i << endl;
+        printed[i] = true;
+        int v = next[i];
+        while (v != -1) {
             cout << v << endl;
+            if (printed[v])
+                break;
+            printed[v] = true;
             v = next[v];
         }
-        if (v == 1)
-            cout << 1 << endl;
+        cout << "-----------------" << endl;
+        for (int j = 0; j < N + 1; j++) {
+            cout << "next[" << j << "]: " << next[j] << endl;
+        }
+
+        if (v == i)
+            cout << i << endl;
     }
     return 0;
 }
