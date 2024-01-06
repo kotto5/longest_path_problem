@@ -9,7 +9,7 @@ OBJS	=	$(addprefix $(OBJDIR)/, $(notdir $(SRCS:.cpp=.o)))
 DEPS	=	$(addprefix $(OBJDIR)/, $(notdir $(SRCS:.cpp=.d)))
 
 CXX			= c++
-CXXFLAGS	= -Wall -Wextra -Werror -g -MMD -MP
+CXXFLAGS	= -Wall -Wextra -Werror -g -fsanitize=address -MMD -MP
 
 RM		=	rm -rf
 

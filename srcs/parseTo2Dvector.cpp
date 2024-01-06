@@ -76,7 +76,7 @@ static std::vector<t_input>    getTokenVector(std::istream& is) {
         else if (s[s.size() - 1] == '\r')
             s.pop_back();
         // split with ", "
-        std::vector<std::string> tokens = split(s, ", ");
+        std::vector<std::string> tokens = split(s, DELIMITER);
         if (tokens.size() != 3)
             throw std::runtime_error("Invalid input (line must contain 3 values): " + s);
         if (!isuint(tokens[0]) || !isuint(tokens[1]))
@@ -127,6 +127,7 @@ std::vector<std::vector<double> > parseTo2Dvector(std::istream& is) {
     for (auto itr = tokensVector.begin(), end = tokensVector.end();
         itr != end; ++itr) {
         v[std::get<0>(*itr) - min][std::get<1>(*itr) - min] = std::get<2>(*itr);
+        v[std::get<1>(*itr) - min][std::get<0>(*itr) - min] = std::get<2>(*itr);
     }
     #ifdef DEBUG
     output_vector(v);
