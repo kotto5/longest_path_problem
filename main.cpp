@@ -13,14 +13,6 @@ struct edge {
     int from;   // 辺の始点
     int to;     // 辺の終点
     double leng;   // 辺の長さ
-    bool    operator<(edge &other) {
-        return ((this->leng < other.leng) || 
-            (this->leng == other.leng && this->to < other.to));
-    }
-    bool    operator>(edge &other) {
-        return ((this->leng > other.leng) || 
-            (this->leng == other.leng && this->to > other.to));
-    }
 };
 
 struct comma_is_space : std::ctype<char> {
@@ -71,11 +63,6 @@ double dfs(const vector<vector<edge> > &G, vector<bool> &seen, vector<int> &next
     return ans;
 }
 
-// 最長路問題
-// the longest path problem
-// path contain cycle
-// 無向グラフの最長路問題
-// 最大の経路のパスを出力する
 int main() {
     vector<vector<edge> > graph; // graph[v]: 頂点vから出る辺の集合
     // input: init graph
@@ -87,7 +74,8 @@ int main() {
             int a, b;
             double c;
             cin >> a >> b >> c;
-            c = -1.0 * c; // 最長路問題
+            // -1 * c: 最長パスを求めるため
+            c = -1.0 * c;
             edges.push_back({a, b, c});
             if (graphSize < a)
                 graphSize = a;
@@ -110,7 +98,7 @@ int main() {
         vector<int> longestPath(graphSize, -1);
         int longestPathStart = -1;
         for (int i = 0; i < graphSize; i++) {
-            cout << endl << "============== root: " << i << " ==============" << endl;
+            cout << "============== root: " << i << " ==============" << endl;
             vector<bool> seen(graphSize, false);
             vector<int> next(graphSize, -1);
             double len = dfs(graph, seen, next, i) * -1.0;
@@ -119,6 +107,7 @@ int main() {
                 longestPath = next;
                 longestPathStart = i;
             }
+            cout << endl;
         }
         cout <<  longestLength << endl;
         cout << "======= root: " << longestPathStart << " =======" << endl;
