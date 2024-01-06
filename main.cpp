@@ -93,22 +93,23 @@ int main() {
         if (cin.eof())
             break;
     }
-    vector<vector<edge> > G(graphSize + 1);
+    graphSize += 1;
+    vector<vector<edge> > graph(graphSize); // graph[v]: 頂点vから出る辺の集合
     for (auto v: edges) {
-        G[v.from].push_back(v);
-        G[v.to].push_back({v.to, v.from, v.leng});
+        graph[v.from].push_back(v);
+        graph[v.to].push_back({v.to, v.from, v.leng});
     }
 
     // main algorithm
     {
         double  leng = -1.0 / 0.0;
-        vector<int> longestPath(graphSize + 1, -1);
+        vector<int> longestPath(graphSize, -1);
         int longestPathStart = -1;
-        for (int i = 0; i < graphSize + 1; i++) {
+        for (int i = 0; i < graphSize; i++) {
             cout << endl << "============== root: " << i << " ==============" << endl;
-            vector<bool> seen(graphSize + 1, false);
-            vector<int> next(graphSize + 1, -1);
-            double tmp = dfs(G, seen, next, i) * -1.0;
+            vector<bool> seen(graphSize, false);
+            vector<int> next(graphSize, -1);
+            double tmp = dfs(graph, seen, next, i) * -1.0;
             if (leng < tmp) {
                 leng = tmp;
                 longestPath = next;
@@ -117,7 +118,7 @@ int main() {
         }
         cout <<  leng << endl;
         cout << "======= root: " << longestPathStart << " =======" << endl;
-        vector<bool> printed(graphSize + 1, false);
+        vector<bool> printed(graphSize, false);
         int v = longestPathStart;
         while (v != -1) {
             cout << v << endl;
@@ -127,7 +128,7 @@ int main() {
             v = longestPath[v];
         }
         cout << "-----------------" << endl;
-        for (int j = 0; j < graphSize + 1; j++) {
+        for (int j = 0; j < graphSize; j++) {
             cout << "longestPath[" << j << "]: " << longestPath[j] << endl;
         }
     }
