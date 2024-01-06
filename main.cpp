@@ -23,7 +23,6 @@ struct edge {
     }
 };
 
-
 struct comma_is_space : std::ctype<char> {
   comma_is_space() : std::ctype<char>(get_table()) {}
   static mask const* get_table()
@@ -37,40 +36,39 @@ struct comma_is_space : std::ctype<char> {
   }
 };
 
-double dfs(const vector<vector<edge> > &G, int v, vector<bool> &used, vector<int> &next, int parent = -1) {
-    used[v] = true;
-    vector<bool> used_longest(used);
+double dfs(const vector<vector<edge> > &G, vector<bool> &seen, vector<int> &next, int v, int prev = -1) {
+    seen[v] = true;
+    vector<bool> seen_longest(seen);
     vector<int> next_longest(next);
-    double ret = 1.0 / 0.0;
+    double ans = 1.0 / 0.0;
     for (auto nv: G[v]) {
-        vector<int> next_tmp(next);
-        vector<bool> used_tmp(used);
-        if (nv.to == parent)
+        if (nv.to == prev)
             continue;
-        if (used[nv.to])
+        else if (seen[nv.to])
         {
-            // cout << "test 2 next: " << next[v] << endl;
-            if (ret > nv.leng) {
-                ret = nv.leng;
+            if (nv.leng < ans) {
+                ans = nv.leng;
                 next_longest = next;
                 next_longest[v] = nv.to;
             }
             continue;
         }
-        int tmp = dfs(G, nv.to, used_tmp, next_tmp, v);
-        cout << "root" << v << " next_copy: " << nv.to << " tmp: " << tmp << " nv leng: " << nv.leng << " tmp + nv.leng: " << tmp + nv.leng << endl;
-        if (ret > tmp + nv.leng) {
-            ret = tmp + nv.leng;
+        vector<int> next_tmp(next);
+        vector<bool> seen_tmp(seen);
+        double weight = dfs(G, seen_tmp, next_tmp, nv.to, v) + nv.leng;
+        cout << "root" << v << " next_copy: " << nv.to << " tmp: " << weight << " nv leng: " << nv.leng << " weight + nv.leng: " << weight + nv.leng << endl;
+        if (weight < ans) {
+            ans = weight;
             next_longest = next_tmp;
             next_longest[v] = nv.to;
-            used_longest = used_tmp;
+            seen_longest = seen_tmp;
         }
     }
-    used = used_longest;
     next = next_longest;
-    if (ret == 1.0 / 0.0)
-        ret = 0.0;
-    return ret;
+    seen = seen_longest;
+    if (ans == 1.0 / 0.0)
+        ans = 0.0;
+    return ans;
 }
 
 // 最長路問題
@@ -79,24 +77,24 @@ double dfs(const vector<vector<edge> > &G, int v, vector<bool> &used, vector<int
 // 無向グラフの最長路問題
 // 最大の経路のパスを出力する
 int main() {
-    vector<edge> E;
-    int         N = 0;
+    vector<edge> edges;
+    int         graphSize = 0;
     cin.imbue(locale(cin.getloc(), new comma_is_space));
     while (1) {
         int a, b;
         double c;
         cin >> a >> b >> c;
         c = -1.0 * c; // 最長路問題
-        E.push_back({a, b, c});
-        if (N < a)
-            N = a;
-        if (N < b)
-            N = b;
+        edges.push_back({a, b, c});
+        if (graphSize < a)
+            graphSize = a;
+        if (graphSize < b)
+            graphSize = b;
         if (cin.eof())
             break;
     }
-    vector<vector<edge> > G(N + 1);
-    for (auto v: E) {
+    vector<vector<edge> > G(graphSize + 1);
+    for (auto v: edges) {
         G[v.from].push_back(v);
         G[v.to].push_back({v.to, v.from, v.leng});
     }
@@ -104,13 +102,13 @@ int main() {
     // main algorithm
     {
         double  leng = -1.0 / 0.0;
-        vector<int> longestPath(N + 1, -1);
+        vector<int> longestPath(graphSize + 1, -1);
         int longestPathStart = -1;
-        for (int i = 0; i < N + 1; i++) {
+        for (int i = 0; i < graphSize + 1; i++) {
             cout << endl << "============== root: " << i << " ==============" << endl;
-            vector<bool> used(N + 1, false);
-            vector<int> next(N + 1, -1);
-            double tmp = dfs(G, i, used, next) * -1.0;
+            vector<bool> seen(graphSize + 1, false);
+            vector<int> next(graphSize + 1, -1);
+            double tmp = dfs(G, seen, next, i) * -1.0;
             if (leng < tmp) {
                 leng = tmp;
                 longestPath = next;
@@ -119,7 +117,7 @@ int main() {
         }
         cout <<  leng << endl;
         cout << "======= root: " << longestPathStart << " =======" << endl;
-        vector<bool> printed(N + 1, false);
+        vector<bool> printed(graphSize + 1, false);
         int v = longestPathStart;
         while (v != -1) {
             cout << v << endl;
@@ -129,7 +127,7 @@ int main() {
             v = longestPath[v];
         }
         cout << "-----------------" << endl;
-        for (int j = 0; j < N + 1; j++) {
+        for (int j = 0; j < graphSize + 1; j++) {
             cout << "longestPath[" << j << "]: " << longestPath[j] << endl;
         }
     }
