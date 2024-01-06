@@ -106,21 +106,21 @@ int main() {
     int graphSize = graph.size();
     // main algorithm
     {
-        double  leng = -1.0 / 0.0;
+        double  longestLength = -1.0 / 0.0;
         vector<int> longestPath(graphSize, -1);
         int longestPathStart = -1;
         for (int i = 0; i < graphSize; i++) {
             cout << endl << "============== root: " << i << " ==============" << endl;
             vector<bool> seen(graphSize, false);
             vector<int> next(graphSize, -1);
-            double tmp = dfs(graph, seen, next, i) * -1.0;
-            if (leng < tmp) {
-                leng = tmp;
+            double len = dfs(graph, seen, next, i) * -1.0;
+            if (longestLength < len) {
+                longestLength = len;
                 longestPath = next;
                 longestPathStart = i;
             }
         }
-        cout <<  leng << endl;
+        cout <<  longestLength << endl;
         cout << "======= root: " << longestPathStart << " =======" << endl;
         vector<bool> printed(graphSize, false);
         int v = longestPathStart;
