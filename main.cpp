@@ -103,32 +103,35 @@ int main() {
 
     // main algorithm
     {
-        int i = 2;
-        vector<bool> used(N + 1, false);
-        vector<int> next(N + 1, -1);
-        cout << "-----------------" << endl;
-        // cout << dfs(G, 1, used, dist, next) << endl; // 最短路問題
-        double  leng = -1.0 * dfs(G, i, used, next);
+        double  leng = -1.0 / 0.0;
+        vector<int> longestPath(N + 1, -1);
+        int longestPathStart = -1;
+        for (int i = 0; i < N + 1; i++) {
+            cout << endl << "============== root: " << i << " ==============" << endl;
+            vector<bool> used(N + 1, false);
+            vector<int> next(N + 1, -1);
+            double tmp = dfs(G, i, used, next) * -1.0;
+            if (leng < tmp) {
+                leng = tmp;
+                longestPath = next;
+                longestPathStart = i;
+            }
+        }
         cout <<  leng << endl;
-        cout << "======= root: " << i << " =======" << endl;
+        cout << "======= root: " << longestPathStart << " =======" << endl;
         vector<bool> printed(N + 1, false);
-        cout << i << endl;
-        printed[i] = true;
-        int v = next[i];
+        int v = longestPathStart;
         while (v != -1) {
             cout << v << endl;
             if (printed[v])
                 break;
             printed[v] = true;
-            v = next[v];
+            v = longestPath[v];
         }
         cout << "-----------------" << endl;
         for (int j = 0; j < N + 1; j++) {
-            cout << "next[" << j << "]: " << next[j] << endl;
+            cout << "longestPath[" << j << "]: " << longestPath[j] << endl;
         }
-
-        if (v == i)
-            cout << i << endl;
     }
     return 0;
 }
