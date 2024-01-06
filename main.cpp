@@ -37,13 +37,15 @@ struct comma_is_space : std::ctype<char> {
   }
 };
 
-double dfs(vector<vector<edge> > &G, int v, vector<bool> &used, vector<double> &dist, vector<int> &next, int parent = -1) {
+double dfs(vector<vector<edge> > &G, int v, vector<bool> &used, vector<int> &next, int parent = -1) {
     used[v] = true;
+    vector<bool> used_copy(used);
+    vector<int> next_copy(next);
     double ret = 1.0 / 0.0;
     for (auto nv: G[v]) {
         if (nv.to == parent)
             continue;
-        if (used[nv.to])
+        if (used_copy[nv.to])
         {
             // cout << "test 2 next: " << next[v] << endl;
             if (ret > nv.leng) {
@@ -52,10 +54,11 @@ double dfs(vector<vector<edge> > &G, int v, vector<bool> &used, vector<double> &
             }
             continue;
         }
-        int tmp = dfs(G, nv.to, used, dist, next, v);
-        cout << "root" << v << " next: " << nv.to << " tmp: " << tmp << " nv leng: " << nv.leng << " tmp + nv.leng: " << tmp + nv.leng << endl;
+        int tmp = dfs(G, nv.to, used_copy, next_copy, v);
+        cout << "root" << v << " next_copy: " << nv.to << " tmp: " << tmp << " nv leng: " << nv.leng << " tmp + nv.leng: " << tmp + nv.leng << endl;
         if (ret > tmp + nv.leng) {
             ret = tmp + nv.leng;
+            next = next_copy;
             next[v] = nv.to;
         }
     }
@@ -77,6 +80,8 @@ int main() {
         int a, b;
         double c;
         cin >> a >> b >> c;
+        // c = c; // 最短路問題
+        c = -1.0 * c; // 最長路問題
         cout << a << " " << b << " " << c << endl;
         E.push_back({a, b, c});
         if (N < a)
@@ -105,11 +110,12 @@ int main() {
     // main algorithm
     {
         vector<bool> used(N + 1, false);
-        vector<double> dist(N + 1, 1.0 / 0.0);
-        dist[1] = 0;
+        // vector<double> dist(N + 1, 1.0 / 0.0);
+        // dist[1] = 0;
         vector<int> next(N + 1, -1);
         cout << "-----------------" << endl;
-        cout << dfs(G, 1, used, dist, next) << endl;
+        // cout << dfs(G, 1, used, dist, next) << endl; // 最短路問題
+        cout << -1.0 * dfs(G, 1, used, next) << endl; // 最長路問題
         cout << 1 << endl;
         int v = next[1];
         while (v != -1 && v != 1) {
