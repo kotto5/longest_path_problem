@@ -1,81 +1,101 @@
-#include "../includes/main.hpp"
-#include <limits>
-#include <cmath>
+#include "main.hpp"
 
-std::vector<std::vector<double> > mult(std::vector<std::vector<double> > v, double multiple) {
-    for (auto itr = v.begin(), end = v.end();
-        itr != end; ++itr) {
-        for (auto itr2 = itr->begin(), end2 = itr->end();
-            itr2 != end2; ++itr2) {
-            *itr2 *= multiple;
-        }
-    }
-    return v;
-}
-
-std::vector<std::vector<double> > fillBlankOfInput(std::vector<std::vector<double> > v) {
-    for (size_t i = 0, size = v.size(); i < size; i++) {
-        for (size_t j = 0; j < size; j++) {
-            if (std::isnan(v[i][j])) {
-                if (i == j)
-                    v[i][j] = 0;
-                else
-                    v[i][j] = std::numeric_limits<double>::infinity();
+double dfs(const vector<vector<edge> > &G, vector<bool> &seen, vector<int> &next, int v, int prev = -1) {
+    seen[v] = true;
+    vector<bool> seen_longest(seen);
+    vector<int> next_longest(next);
+    double ans = 1.0 / 0.0;
+    for (auto nv: G[v]) {
+        if (nv.to == prev)
+            continue;
+        else if (seen[nv.to])
+        {
+            if (nv.leng < ans) {
+                ans = nv.leng;
+                next_longest = next;
+                next_longest[v] = nv.to;
             }
+            continue;
+        }
+        vector<int> next_tmp(next);
+        vector<bool> seen_tmp(seen);
+        double weight = dfs(G, seen_tmp, next_tmp, nv.to, v) + nv.leng;
+        if (weight < ans) {
+            ans = weight;
+            next_longest = next_tmp;
+            next_longest[v] = nv.to;
+            seen_longest = seen_tmp;
         }
     }
-    return v;
-}
-
-t_data FloydWarshall(t_data data) {
-    unsigned int n = data.n;
-    for (unsigned int k = 0; k < n; k++){ // 経由する頂点
-        for (unsigned int i = 0; i < n; i++) { // 始点
-            for (unsigned int j = 0; j < n; j++) { // 終点
-                if (data.d[i][j] > data.d[i][k] + data.d[k][j]) {
-                    data.d[i][j] = data.d[i][k] + data.d[k][j];
-                    // data.via[j][k] = k;
-                    data.via[i][j] = data.via[i][k];
-                }
-                // data.d[j][k] = std::min(data.d[j][k], data.d[j][i] + data.d[i][k]);
-            }
-        }
-    }
-    return data;
-}
-
-std::vector<unsigned int> getShortestPath(std::vector<std::vector<double> > v) {
-    (void)v;
-    std::vector<unsigned int> shortestPath;
-    return shortestPath;
+    next = next_longest;
+    seen = seen_longest;
+    if (ans == 1.0 / 0.0)
+        ans = 0.0;
+    return ans;
 }
 
 int main() {
-    std::vector<std::vector<double> > distances;
-    try {
-        distances = parseTo2Dvector(std::cin);
+    vector<vector<edge> > graph; // graph[v]: 頂点vから出る辺の集合
+    // input: init graph
+    {
+        int         graphSize = 0;
+        vector<edge> edges;
+        cin.imbue(locale(cin.getloc(), new comma_is_space));
+        while (1) {
+            int a, b;
+            double c;
+            cin >> a >> b >> c;
+            // -1 * c: 最長パスを求めるため
+            c = -1.0 * c;
+            edges.push_back({a, b, c});
+            if (graphSize < a)
+                graphSize = a;
+            if (graphSize < b)
+                graphSize = b;
+            if (cin.eof())
+                break;
+        }
+        graphSize += 1;
+        graph.resize(graphSize);
+        for (auto v: edges) {
+            graph[v.from].push_back(v);
+            graph[v.to].push_back({v.to, v.from, v.leng});
+        }
     }
-    catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        return 1;
+    int graphSize = graph.size();
+    // main algorithm
+    {
+        double  longestLength = -1.0 / 0.0;
+        vector<int> longestPath(graphSize, -1);
+        int longestPathStart = -1;
+        for (int i = 0; i < graphSize; i++) {
+            #ifdef DEBUG
+                cout << "============== root: " << i << " ==============" << endl;
+            #endif
+            vector<bool> seen(graphSize, false);
+            vector<int> next(graphSize, -1);
+            double len = dfs(graph, seen, next, i) * -1.0;
+            if (longestLength < len) {
+                longestLength = len;
+                longestPath = next;
+                longestPathStart = i;
+            }
+            #ifdef DEBUG
+                cout << endl;
+            #endif
+        }
+        #ifdef DEBUG
+            cout <<  longestLength << endl;
+        #endif
+        vector<bool> printed(graphSize, false);
+        int v = longestPathStart;
+        while (v != -1) {
+            cout << v << "\r\n";
+            if (printed[v])
+                break;
+            printed[v] = true;
+            v = longestPath[v];
+        }
     }
-    // std::vector<std::vector<double> > reverseDistances = fillBlankOfInput(mult(distances, -1));
-    std::vector<std::vector<double> > reverseDistances = fillBlankOfInput(distances);
-    output_vector(reverseDistances);
-    t_data data(reverseDistances);
-    data.printVia();
-    t_data shortestDistances = FloydWarshall(data);
-    output_vector(shortestDistances.d);
-    shortestDistances.printVia();
-    shortestDistances.printPath3(4, 4);
-    (void)shortestDistances;
-    // shortestDistances.printPath1(0, 2);
-    // output_vector(shortestDistances);
-    // const std::vector<unsigned int> shortestPath = getShortestPath(shortestDistances);
-    // for (auto itr = shortestPath.begin(), end = shortestPath.end();
-    //     itr != end; ++itr) {
-    //     std::cout << *itr << "\r\n";
-    // }
-    
     return 0;
 }
