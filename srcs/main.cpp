@@ -48,7 +48,6 @@ double dfs(const vector<vector<edge> > &G, vector<bool> &seen, vector<int> &next
         vector<int> next_tmp(next);
         vector<bool> seen_tmp(seen);
         double weight = dfs(G, seen_tmp, next_tmp, nv.to, v) + nv.leng;
-        cout << "root" << v << " next_copy: " << nv.to << " tmp: " << weight << " nv leng: " << nv.leng << " weight + nv.leng: " << weight + nv.leng << endl;
         if (weight < ans) {
             ans = weight;
             next_longest = next_tmp;
@@ -98,7 +97,9 @@ int main() {
         vector<int> longestPath(graphSize, -1);
         int longestPathStart = -1;
         for (int i = 0; i < graphSize; i++) {
-            cout << "============== root: " << i << " ==============" << endl;
+            #ifdef DEBUG
+                cout << "============== root: " << i << " ==============" << endl;
+            #endif
             vector<bool> seen(graphSize, false);
             vector<int> next(graphSize, -1);
             double len = dfs(graph, seen, next, i) * -1.0;
@@ -107,10 +108,13 @@ int main() {
                 longestPath = next;
                 longestPathStart = i;
             }
-            cout << endl;
+            #ifdef DEBUG
+                cout << endl;
+            #endif
         }
-        cout <<  longestLength << endl;
-        cout << "======= root: " << longestPathStart << " =======" << endl;
+        #ifdef DEBUG
+            cout <<  longestLength << endl;
+        #endif
         vector<bool> printed(graphSize, false);
         int v = longestPathStart;
         while (v != -1) {
@@ -119,10 +123,6 @@ int main() {
                 break;
             printed[v] = true;
             v = longestPath[v];
-        }
-        cout << "-----------------" << endl;
-        for (int j = 0; j < graphSize; j++) {
-            cout << "longestPath[" << j << "]: " << longestPath[j] << endl;
         }
     }
     return 0;
