@@ -1,32 +1,4 @@
-#include <vector>
-#include <iostream>
-#include <queue>
-#include <algorithm>
-#include <string>
-#include <cmath>
-#include <locale>
-
-using namespace std;
-using Graph = vector<vector<int> >;
-
-struct edge {
-    int from;   // 辺の始点
-    int to;     // 辺の終点
-    double leng;   // 辺の長さ
-};
-
-struct comma_is_space : std::ctype<char> {
-  comma_is_space() : std::ctype<char>(get_table()) {}
-  static mask const* get_table()
-  {
-    static mask rc[table_size];
-    rc[','] = std::ctype_base::space;
-    rc[' '] = std::ctype_base::space;
-    rc['\n'] = std::ctype_base::space;
-    rc['\r'] = std::ctype_base::space;
-    return &rc[0];
-  }
-};
+#include "main.hpp"
 
 double dfs(const vector<vector<edge> > &G, vector<bool> &seen, vector<int> &next, int v, int prev = -1) {
     seen[v] = true;
