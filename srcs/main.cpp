@@ -118,7 +118,7 @@ int main() {
         vector<bool> printed(graphSize, false);
         int v = longestPathStart;
         while (v != -1) {
-            cout << v << endl;
+            cout << v << "\r\n";
             if (printed[v])
                 break;
             printed[v] = true;
